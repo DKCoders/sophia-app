@@ -13,15 +13,26 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@rematch/core": "^0.6.0",
+    "axios": "^0.18.0",
+    "bulma": "^0.7.1",
+    "immutability-helper": "^2.7.0",
+    "node-sass": "^4.9.0",
     "prop-types": "^15.6.1",
+    "proppy": "^1.2.1",
+    "proppy-react": "^1.2.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
-    "react-hot-loader": "^4.3.1"
+    "react-hot-loader": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "sass-loader": "^7.0.3",
+    "sophia-components": "^0.1.3"
   },
   "devDependencies": {
     "@neutrinojs/airbnb": "^8.2.3",
     "@neutrinojs/jest": "^8.2.3",
     "@neutrinojs/react": "^8.2.3",
+    "@neutrinojs/style-loader": "^8.2.3",
     "neutrino": "^8.2.3"
   }
 }
