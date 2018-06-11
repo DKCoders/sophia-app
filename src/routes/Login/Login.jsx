@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import {
@@ -63,10 +64,8 @@ const Login = ({
       Username, Email and Password incorrect.
     </Notification>
   );
-  return (
-    <Hero
-      light
-      fullheight
+  const nodes = (
+    <div
       style={{
         position: 'absolute',
         top: 0,
@@ -76,54 +75,60 @@ const Login = ({
         zIndex: 10000,
       }}
     >
-      <HeroBody>
-        {redirect}
-        <Container textCentered>
-          <Column four offsetFour>
-            <Title text="grey">Login</Title>
-            <Subtitle text="grey">Please login to proceed.</Subtitle>
-            <Box>
-              <Image src="/static/img/sophia-logo.png" alt="Login img" ratio="2by1" style={{ marginBottom: 10 }} />
-              <Field>
-                <Control>
-                  <Input
-                    large
-                    name="username"
-                    onChange={onInputChange}
-                    type="text"
-                    placeholder="Your Username or Email"
-                    value={username}
-                  />
-                </Control>
-              </Field>
-              <Field>
-                <Control>
-                  <Input
-                    large
-                    name="password"
-                    onChange={onInputChange}
-                    type="password"
-                    placeholder="Your Password"
-                    value={password}
-                  />
-                </Control>
-              </Field>
-              {errorNotification}
-              <Button
-                block
-                info
-                large
-                fullwidth
-                onClick={onLoginClick}
-              >
-                  Login
-              </Button>
-            </Box>
-          </Column>
-        </Container>
-      </HeroBody>
-    </Hero>
+      <Hero
+        light
+        fullheight
+      >
+        <HeroBody>
+          {redirect}
+          <Container textCentered>
+            <Column four offsetFour>
+              <Title text="grey">Login</Title>
+              <Subtitle text="grey">Please login to proceed.</Subtitle>
+              <Box>
+                <Image src="/static/img/sophia-logo.png" alt="Login img" ratio="2by1" style={{ marginBottom: 10 }} />
+                <Field>
+                  <Control>
+                    <Input
+                      large
+                      name="username"
+                      onChange={onInputChange}
+                      type="text"
+                      placeholder="Your Username or Email"
+                      value={username}
+                    />
+                  </Control>
+                </Field>
+                <Field>
+                  <Control>
+                    <Input
+                      large
+                      name="password"
+                      onChange={onInputChange}
+                      type="password"
+                      placeholder="Your Password"
+                      value={password}
+                    />
+                  </Control>
+                </Field>
+                {errorNotification}
+                <Button
+                  block
+                  info
+                  large
+                  fullwidth
+                  onClick={onLoginClick}
+                >
+                    Login
+                </Button>
+              </Box>
+            </Column>
+          </Container>
+        </HeroBody>
+      </Hero>
+    </div>
   );
+  return ReactDOM.createPortal(nodes, document.getElementById('portal'));
 };
 
 Login.propTypes = {

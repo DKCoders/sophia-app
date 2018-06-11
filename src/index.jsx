@@ -14,6 +14,9 @@ const store = init({
   plugins: [selectPlugin({ sliceState: rootState => rootState })],
 });
 
+const elem = document.createElement('div');
+elem.id = 'portal';
+document.body.appendChild(elem);
 const root = document.getElementById('root');
 const load = () => render(
   (
