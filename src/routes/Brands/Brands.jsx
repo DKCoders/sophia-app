@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-underscore-dangle,jsx-a11y/anchor-is-valid */
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -10,12 +10,15 @@ import {
   Input,
   Columns,
   Column,
-  Card,
-  CardImage,
-  CardContent,
   Image,
   Content,
   Title,
+  Media,
+  MediaLeft,
+  MediaContent,
+  Level,
+  LevelLeft,
+  Icon,
 } from 'sophia-components';
 import { compose, didSubscribe, withState } from 'proppy';
 import { attach } from 'proppy-react';
@@ -30,17 +33,27 @@ const P = compose(
 const Brands = ({ brands, search, setSearch }) => {
   const filtered = !search ? brands : brands.filter(filterByQuery(search));
   const items = filtered.map(brand => (
-    <Column three key={brand._id}>
-      <Card>
-        <CardImage>
-          <Image src={brand.logo} ratio="square" alt="brand logo" />
-        </CardImage>
-        <CardContent>
+    <Column four key={brand._id}>
+      <Media>
+        <MediaLeft>
+          <Image src={brand.logo} square="64" alt="brand logo" />
+        </MediaLeft>
+        <MediaContent>
           <Content>
-            <Title textCentered six>{brand.name}</Title>
+            <Title six>{brand.name}</Title>
           </Content>
-        </CardContent>
-      </Card>
+          <Level>
+            <LevelLeft>
+              <a className="level-item">
+                <Icon icon="fas fa-clone" />
+              </a>
+              <a className="level-item">
+                <Icon icon="fas fa-trash" />
+              </a>
+            </LevelLeft>
+          </Level>
+        </MediaContent>
+      </Media>
     </Column>
   ));
   return (
