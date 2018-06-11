@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -10,7 +11,7 @@ import {
 } from 'sophia-components';
 import { withHandlers } from 'proppy';
 import { attach } from 'proppy-react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import Auth from '../../services/auth';
 
 const P = withHandlers({
@@ -25,9 +26,9 @@ const Navbar = ({ logout }) => (
   <NavbarSophia black>
     <Container fluid>
       <NavbarBrand>
-        <NavbarItem>
+        <Link to="/" className="navbar-item">
           <img src="/static/img/sophia-logo.png" alt="Sophia logo" />
-        </NavbarItem>
+        </Link>
       </NavbarBrand>
       <NavbarMenu>
         <NavbarEnd>
