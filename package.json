@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@rematch/core": "^0.6.0",
+    "@rematch/select": "^0.3.0",
     "axios": "^0.18.0",
     "bulma": "^0.7.1",
     "immutability-helper": "^2.7.0",
@@ -24,9 +25,11 @@
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-hot-loader": "^4.3.1",
+    "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
+    "reselect": "^3.0.1",
     "sass-loader": "^7.0.3",
-    "sophia-components": "^0.1.3"
+    "sophia-components": "^0.2.0"
   },
   "devDependencies": {
     "@neutrinojs/airbnb": "^8.2.3",
