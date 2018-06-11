@@ -24,9 +24,10 @@
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-hot-loader": "^4.3.1",
+    "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "sass-loader": "^7.0.3",
-    "sophia-components": "^0.1.3"
+    "sophia-components": "^0.2.0"
   },
   "devDependencies": {
     "@neutrinojs/airbnb": "^8.2.3",
