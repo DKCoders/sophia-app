@@ -21,6 +21,7 @@ module.exports = {
       }],
       test: /\.(sass)$/,
     }],
-    '@neutrinojs/jest'
-  ]
+    '@neutrinojs/jest',
+    neutrino => neutrino.config.output.publicPath('/'),
+  ],
 };

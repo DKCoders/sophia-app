@@ -5,6 +5,7 @@ import {
   Navbar as NavbarSophia,
   NavbarBrand,
   NavbarMenu,
+  NavbarStart,
   NavbarEnd,
   NavbarItem,
   Container,
@@ -31,6 +32,9 @@ const Navbar = ({ logout }) => (
         </Link>
       </NavbarBrand>
       <NavbarMenu>
+        <NavbarStart>
+          <Link className="navbar-item" to="/brands">Brands</Link>
+        </NavbarStart>
         <NavbarEnd>
           <NavbarItem onClick={logout}>
               Logout

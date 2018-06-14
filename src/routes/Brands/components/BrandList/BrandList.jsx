@@ -1,7 +1,8 @@
-/* eslint-disable no-underscore-dangle,jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,max-len */
+/* eslint-disable no-underscore-dangle,jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,max-len */
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Container,
   Navbar,
   NavbarBrand,
   NavbarItem,
@@ -11,8 +12,8 @@ import {
   Columns,
   Column,
   Image,
-  Content,
   Title,
+  Subtitle,
   Media,
   MediaLeft,
   MediaContent,
@@ -21,7 +22,7 @@ import {
   Icon,
   Box,
 } from 'sophia-components';
-import { compose, didSubscribe, withState, withHandlers } from 'proppy';
+import { compose, withState, withHandlers } from 'proppy';
 import { attach } from 'proppy-react';
 import RouteTitle from '../../../../components/RouteTitle/index';
 import { filterByQuery } from '../../../../utils/helpers';
@@ -30,11 +31,9 @@ const P = compose(
   withState('search', 'setSearch', ''),
   withHandlers({
     goTo: ({ history }) => (id) => {
-      console.log(history);
       history.push(`/brands/${id}`);
     },
   }),
-  didSubscribe(({ fetchBrands }) => fetchBrands()),
 );
 
 const BrandList = ({
@@ -43,18 +42,17 @@ const BrandList = ({
   const filtered = !search ? brands : brands.filter(filterByQuery(search));
   const items = filtered.map(brand => (
     <Column four key={brand._id}>
-      <Box style={{ cursor: 'pointer' }}>
-        <Media onClick={() => goTo(brand._id)}>
+      <Box style={{ cursor: 'pointer' }} onClick={() => goTo(brand._id)}>
+        <Media>
           <MediaLeft>
             <Image src={brand.logo} square="64" alt="brand logo" />
           </MediaLeft>
           <MediaContent>
-            <Content>
-              <Title six>{brand.name}</Title>
-            </Content>
+            <Title six>{brand.name}</Title>
+            <Subtitle six style={{ fontSize: '0.85rem' }}>{brand.code}</Subtitle>
             <Level>
               <LevelLeft>
-                <a className="level-item" onClick={() => goTo(brand._id)}>
+                <a className="level-item">
                   <Icon icon="fas fa-clone" />
                 </a>
                 <a className="level-item">
@@ -71,23 +69,27 @@ const BrandList = ({
     <Fragment>
       <RouteTitle title="Brands" />
       <Navbar dark>
-        <NavbarBrand>
-          <NavbarItem as="div">
-            <Field>
-              <Control>
-                <Input
-                  placeholder="Search..."
-                  value={search}
-                  onChange={({ target: { value } }) => setSearch(value)}
-                />
-              </Control>
-            </Field>
-          </NavbarItem>
-        </NavbarBrand>
+        <Container>
+          <NavbarBrand>
+            <NavbarItem as="div">
+              <Field>
+                <Control>
+                  <Input
+                    placeholder="Search..."
+                    value={search}
+                    onChange={({ target: { value } }) => setSearch(value)}
+                  />
+                </Control>
+              </Field>
+            </NavbarItem>
+          </NavbarBrand>
+        </Container>
       </Navbar>
-      <Columns mobile multiline style={{ marginTop: 10 }}>
-        {items}
-      </Columns>
+      <Container>
+        <Columns mobile multiline style={{ marginTop: 10 }}>
+          {items}
+        </Columns>
+      </Container>
     </Fragment>
   );
 };
