@@ -12,7 +12,7 @@ import {
 } from 'sophia-components';
 import witEditIcon from '../../../../hoc/withEditIcon';
 
-const Title = witEditIcon(SophiaTitle);
+const Title = witEditIcon(SophiaTitle, { inputClassName: 'title' });
 
 const BrandView = ({ brand }) => (!brand ? null : (
   <Fragment>
@@ -24,8 +24,12 @@ const BrandView = ({ brand }) => (!brand ? null : (
               <Image src={brand.logo} alt="brand logo" ratio="square" />
             </Column>
             <Column>
-              <Title six marginless>{brand.code}</Title>
-              <Title>{brand.name}</Title>
+              <Title six marginless inputClassName="is-6 is-marginless">{brand.code}</Title>
+              <Title
+                onSaveClick={(editable) => { console.log(editable); return true; }}
+              >
+                {brand.name}
+              </Title>
               <Subtitle six><strong>Origin:</strong> {brand.origin}</Subtitle>
               <p>{brand.description}</p>
             </Column>
