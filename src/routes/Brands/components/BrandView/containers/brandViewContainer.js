@@ -6,6 +6,6 @@ const mapStateToProps = (state, { match: { params: { id } } }) => ({
   brand: select.brand.brandById(state, { id }),
 });
 
-// const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = ({ brand: { patchBrand } }) => ({ patchBrand });
 
-export default connect(mapStateToProps)(BrandView);
+export default connect(mapStateToProps, mapDispatchToProps)(BrandView);

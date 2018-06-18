@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import update from 'immutability-helper';
 
 export const initialState = {
@@ -10,6 +11,13 @@ export const reducers = {
   updateBrands(state, brands = {}) {
     return update(state, {
       brands: { $merge: brands },
+    });
+  },
+  updateBrand(state, brand) {
+    return update(state, {
+      brands: {
+        [brand._id]: { $set: brand },
+      },
     });
   },
   setFetched(state, value) {

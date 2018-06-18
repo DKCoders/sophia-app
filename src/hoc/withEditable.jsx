@@ -5,12 +5,12 @@ import { withState, withHandlers, compose } from 'proppy';
 import { attach } from 'proppy-react';
 
 const style = {
-  background: 'none',
-  border: 'none',
-  width: 'auto',
-  maxWidth: 'none',
   boxShadow: 'inset 0 1px 2px rgba(10, 10, 10, 0.1)',
-  marginBottom: 'inherit',
+  fontSize: 'inherit',
+  fontWeight: 'inherit',
+  color: 'inherit',
+  background: 'inherit',
+  border: 'inherit',
 };
 
 class EditInput extends Component {
@@ -25,24 +25,23 @@ class EditInput extends Component {
   }
 }
 
-const withEditIcon = (Comp, { inputClassName, inputStyle = {} } = {}) => {
+const withEditable = (Comp, { inputClassName, inputStyle = {} } = {}) => {
   const P = compose(
     withState('hovered', 'setHovered', false),
     withState('editable', 'setEditable', null),
     withState('saving', 'setSaving', false),
     withHandlers({
       startSaveRequest: props => async () => {
-        props.setSaving(true);
-        try {
-          const result = await props.onSaveClick(props.editable);
-          if (result) {
+        if (!props.saving) {
+          props.setSaving(true);
+          try {
+            await new Promise((resolve, reject) =>
+              props.onSaveClick(props.editable, props.data, resolve, reject));
             props.setSaving(false);
             props.setEditable(null);
-          } else {
+          } catch (err) {
             props.setSaving(false);
           }
-        } catch (err) {
-          props.setSaving(false);
         }
       },
     }),
@@ -59,47 +58,49 @@ const withEditIcon = (Comp, { inputClassName, inputStyle = {} } = {}) => {
     saving,
     ...props
   }) => {
-    const element = editable === null ? children : (
-      <EditInput
-        className={[inputClassName, additionaInputClassName].join(' ')}
-        style={{ ...style, ...inputStyle }}
-        type="text"
-        value={editable}
-        onChange={({ target: { value } }) => setEditable(value)}
-        disabled={saving}
-      />
-    );
     const editIcon = !hovered || editable !== null ? null : (
       <Icon
+        key="edit-icon"
         icon="fas fa-edit"
+        small
         style={{ marginLeft: 20, cursor: 'pointer' }}
         onClick={() => setEditable(children)}
       />
     );
     const saveIcon = editable === null ? null : (
       <Icon
-        disabled={saving}
-        icon="fas fa-save"
-        style={{ marginLeft: 20, cursor: 'pointer' }}
+        key="save-icon"
+        icon="fas fa-check"
+        style={{ marginLeft: 20, cursor: !saving ? 'pointer' : 'not-allowed' }}
         onClick={startSaveRequest}
       />
     );
     const cancelIcon = editable === null ? null : (
       <Icon
+        key="cancel-icon"
         disabled={saving}
-        icon="fas fa-cancel"
+        icon="fas fa-ban"
         style={{ marginLeft: 20, cursor: 'pointer' }}
         onClick={() => setEditable(null)}
       />
     );
-    return (
-      <Comp {...props}>
-        <span onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-          {element}
-          {editIcon}
-          {saveIcon}
-          {cancelIcon}
-        </span>
+    return editable === null ? (
+      <Comp {...props} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+        {children}
+        {editIcon}
+      </Comp>
+    ) : (
+      <Comp {...props} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+        <EditInput
+          className={[inputClassName, additionaInputClassName].join(' ')}
+          style={{ ...style, ...inputStyle }}
+          type="text"
+          value={editable}
+          onChange={({ target: { value } }) => setEditable(value)}
+          disabled={saving}
+        />
+        {saveIcon}
+        {cancelIcon}
       </Comp>
     );
   };
@@ -112,4 +113,4 @@ const withEditIcon = (Comp, { inputClassName, inputStyle = {} } = {}) => {
 };
 
 
-export default withEditIcon;
+export default withEditable;

@@ -14,6 +14,11 @@ class Api {
     const response = await axios.get(`${apiUrl}/brands`, Api.authHeader);
     return response.data.data;
   }
+
+  static async patchBrand(brandId, patch) {
+    const response = await axios.patch(`${apiUrl}/brands/${brandId}`, patch, Api.authHeader);
+    return response.data.data;
+  }
 }
 
 export default Api;
