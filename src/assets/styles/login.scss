@@ -1,14 +1,24 @@
-.login-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100vh;
+.login-route-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  background: $light-gray1;
 
-  .login-input {
-    margin-bottom: 1em;
-  }
+  .login-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
 
-  .login-button {
-    margin-top: 1em;
+    .login-input {
+      margin-bottom: 1em;
+    }
+
+    .login-button {
+      margin-top: 1em;
+    }
   }
 }

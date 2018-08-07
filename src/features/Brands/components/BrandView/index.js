@@ -1,1 +1,1 @@
-export { default } from './containers/brandViewContainer';
+export { default } from './BrandView';

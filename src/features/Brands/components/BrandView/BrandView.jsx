@@ -1,26 +1,27 @@
 /* eslint-disable no-underscore-dangle */
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Title,
   Subtitle,
   Columns,
   Column,
-  Image,
-  Hero,
-  HeroBody,
   Container,
 } from 'sophia-components';
 import { withHandlers, compose, didSubscribe, withState } from 'proppy';
 import { attach } from 'proppy-react';
+import { connect } from 'react-redux';
+import { select } from '@rematch/select';
+import { dispatch } from '@rematch/core';
+import ResponsiveImage from '../../../../components/ResponsiveImage';
 
 const P = compose(
   withState('top', 'setTop', null),
   withState('left', 'setLeft', null),
   withHandlers({
-    onSaveClick: ({ brand: { _id: brandId }, patchBrand }) =>
+    onSaveClick: ({ brand: { _id: brandId } }) =>
       (value, data, resolve, reject) =>
-        patchBrand({
+        dispatch.brand.patchBrand({
           brandId, patch: { [data]: value }, resolve, reject,
         }),
   }),
@@ -35,34 +36,30 @@ const P = compose(
 const BrandView = ({
   brand, onSaveClick,
 }) => (!brand ? null : (
-  <Fragment>
-    <Hero light>
-      <HeroBody>
-        <Container>
-          <Columns>
-            <Column two>
-              <Image src={brand.logo} alt="brand logo" ratio="square" />
-            </Column>
-            <Column>
-              <Title
-                six
-                marginless
-                data="code"
-                onSaveClick={onSaveClick}
-              >
-                {brand.code}
-              </Title>
-              <Title id="brand-name">
-                {brand.name}
-              </Title>
-              <Subtitle six><strong>Origin:</strong> {brand.origin}</Subtitle>
-              <p>{brand.description}</p>
-            </Column>
-          </Columns>
-        </Container>
-      </HeroBody>
-    </Hero>
-  </Fragment>
+  <Container>
+    <Columns>
+      <Column two>
+        <ResponsiveImage
+          url={brand.logo}
+        />
+      </Column>
+      <Column>
+        <Title
+          six
+          marginless
+          data="code"
+          onSaveClick={onSaveClick}
+        >
+          {brand.code}
+        </Title>
+        <Title id="brand-name">
+          {brand.name}
+        </Title>
+        <Subtitle six><strong>Origin:</strong> {brand.origin}</Subtitle>
+        <p>{brand.description}</p>
+      </Column>
+    </Columns>
+  </Container>
 ));
 
 BrandView.propTypes = {
@@ -76,4 +73,8 @@ BrandView.defaultProps = {
   left: null,
 };
 
-export default attach(P)(BrandView);
+const mapStateToProps = (state, { match: { params: { id } } }) => ({
+  brand: select.brand.brandByIdSelector(state, { id }),
+});
+
+export default connect(mapStateToProps)(attach(P)(BrandView));

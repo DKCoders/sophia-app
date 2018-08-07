@@ -97,6 +97,8 @@ export const downloadFile = (filename, blob) => {
   window.URL.revokeObjectURL(url);
 };
 
+export const classNameJoiner = (...pieces) => pieces.filter(piece => piece).join(' ');
+
 export const regularReducer = operation => (...keys) => (state, value) => update(state,
   keys.reduceRight((acum, key, index, array) => {
     if (index === array.length - 1) {
