@@ -43,7 +43,7 @@ const BrandList = ({
           <NavbarGroup>
             <Search
               searchTerm={search}
-              onInputChange={value => setSearch(value)}
+              onChange={value => setSearch(value)}
             />
           </NavbarGroup>
         </Container>

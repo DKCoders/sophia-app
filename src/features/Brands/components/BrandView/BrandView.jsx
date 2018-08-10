@@ -8,7 +8,7 @@ import {
   Column,
   Container,
 } from 'sophia-components';
-import { withHandlers, compose, didSubscribe, withState } from 'proppy';
+import { withHandlers, compose } from 'proppy';
 import { attach } from 'proppy-react';
 import { connect } from 'react-redux';
 import { select } from '@rematch/select';
@@ -16,20 +16,12 @@ import { dispatch } from '@rematch/core';
 import ResponsiveImage from '../../../../components/ResponsiveImage';
 
 const P = compose(
-  withState('top', 'setTop', null),
-  withState('left', 'setLeft', null),
   withHandlers({
     onSaveClick: ({ brand: { _id: brandId } }) =>
       (value, data, resolve, reject) =>
         dispatch.brand.patchBrand({
           brandId, patch: { [data]: value }, resolve, reject,
         }),
-  }),
-  didSubscribe((props) => {
-    const name = document.getElementById('brand-name');
-    const { top, left } = name.getBoundingClientRect();
-    props.setTop(top);
-    props.setLeft(left);
   }),
 );
 
@@ -69,8 +61,6 @@ BrandView.propTypes = {
 
 BrandView.defaultProps = {
   brand: null,
-  top: null,
-  left: null,
 };
 
 const mapStateToProps = (state, { match: { params: { id } } }) => ({
