@@ -8,8 +8,15 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 import Auth from '../../services/auth';
 import logo from '../../assets/img/sophia-logo.png';
+
+const styles = () => ({
+  appBar: {
+    position: 'fixed',
+  },
+});
 
 const P = withHandlers({
   logout: ({ history }) => () => {
@@ -19,8 +26,8 @@ const P = withHandlers({
 });
 
 // eslint-disable-next-line no-unused-vars
-const Navbar = ({ logout }) => (
-  <AppBar position="static">
+const Navbar = ({ logout, classes }) => (
+  <AppBar position="static" className={classes.appBar}>
     <Toolbar>
       <Typography style={{ flexGrow: 1 }}>
         <Link to="/" className="navbar-item">
@@ -37,8 +44,9 @@ const Navbar = ({ logout }) => (
 
 Navbar.propTypes = {
   logout: PropTypes.func.isRequired,
+  classes: PropTypes.shape().isRequired,
 };
 
 Navbar.defaultProps = {};
 
-export default withRouter(attach(P)(Navbar));
+export default withStyles(styles)(withRouter(attach(P)(Navbar)));

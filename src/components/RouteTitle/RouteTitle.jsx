@@ -1,17 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Hero, HeroBody, Content, Title, Container } from 'sophia-components';
+import Typography from '@material-ui/core/Typography';
 
 const RouteTitle = ({ title }) => (
-  <Hero small>
-    <HeroBody>
-      <Container>
-        <Content>
-          <Title>{title}</Title>
-        </Content>
-      </Container>
-    </HeroBody>
-  </Hero>
+  <Typography variant="h1">{title}</Typography>
 );
 
 RouteTitle.propTypes = {

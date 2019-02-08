@@ -2,107 +2,91 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Container,
-  Navbar,
-  NavbarBrand,
-  NavbarItem,
-  Control,
-  Field,
-  Input,
-  Columns,
-  Column,
-  Image,
-  Title,
-  Subtitle,
-  Media,
-  MediaLeft,
-  MediaContent,
-  Level,
-  LevelLeft,
-  Icon,
-  Box,
-} from 'sophia-components';
-import { compose, withState, withHandlers } from 'proppy';
+  compose, withState, withHandlers, withStateHandlers,
+} from 'proppy';
 import { attach } from 'proppy-react';
+import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import RouteTitle from '../../../../components/RouteTitle/index';
 import { filterByQuery } from '../../../../utils/helpers';
+import { brandsAsArray } from '../../../../modules/brand/selectors';
+import BrandCard from './components/BrandCard';
 
 const P = compose(
   withState('search', 'setSearch', ''),
+  withStateHandlers({ menuAnchor: null, item: null }, {
+    openMenu: () => (item, { currentTarget }) => ({ item, menuAnchor: currentTarget }),
+    closeMenu: () => () => ({ item: null, menuAnchor: null }),
+  }),
   withHandlers({
-    goTo: ({ history }) => (id) => {
-      history.push(`/brands/${id}`);
+    goTo: ({ history, closeMenu, item }) => () => {
+      history.push(`/brands/${item.id}`);
+      closeMenu();
     },
   }),
 );
 
+
+// TODO: fix goTo
 const BrandList = ({
-  brands, search, setSearch, goTo,
+  brands, search, setSearch, goTo, openMenu, menuAnchor, closeMenu,
 }) => {
   const filtered = !search ? brands : brands.filter(filterByQuery(search));
   const items = filtered.map(brand => (
-    <Column four key={brand._id}>
-      <Box style={{ cursor: 'pointer' }} onClick={() => goTo(brand._id)}>
-        <Media>
-          <MediaLeft>
-            <Image src={brand.logo} square="64" alt="brand logo" />
-          </MediaLeft>
-          <MediaContent>
-            <Title six>{brand.name}</Title>
-            <Subtitle six style={{ fontSize: '0.85rem' }}>{brand.code}</Subtitle>
-            <Level>
-              <LevelLeft>
-                <a className="level-item">
-                  <Icon icon="fas fa-clone" />
-                </a>
-                <a className="level-item">
-                  <Icon icon="fas fa-trash" />
-                </a>
-              </LevelLeft>
-            </Level>
-          </MediaContent>
-        </Media>
-      </Box>
-    </Column>
+    <Grid item md={3} key={brand._id}>
+      <BrandCard brand={brand} onMoreClick={openMenu} />
+    </Grid>
   ));
   return (
     <Fragment>
-      <RouteTitle title="Brands" />
-      <Navbar dark>
-        <Container>
-          <NavbarBrand>
-            <NavbarItem as="div">
-              <Field>
-                <Control>
-                  <Input
-                    placeholder="Search..."
-                    value={search}
-                    onChange={({ target: { value } }) => setSearch(value)}
-                  />
-                </Control>
-              </Field>
-            </NavbarItem>
-          </NavbarBrand>
-        </Container>
-      </Navbar>
-      <Container>
-        <Columns mobile multiline style={{ marginTop: 10 }}>
-          {items}
-        </Columns>
-      </Container>
+      <RouteTitle title="Brands" onClick={goTo} />
+      <Grid container>
+        <Grid item md={12}>
+          <TextField
+            label="Search..."
+            type="search"
+            margin="normal"
+            onChange={({ target: { value } }) => setSearch(value)}
+            value={search}
+          />
+        </Grid>
+      </Grid>
+      <Grid container spacing={8}>
+        {items}
+      </Grid>
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={closeMenu}
+      >
+        <MenuItem onClick={goTo}>Details</MenuItem>
+        <MenuItem>Edit</MenuItem>
+        <MenuItem>Clone</MenuItem>
+        <MenuItem>Delete</MenuItem>
+      </Menu>
     </Fragment>
   );
 };
 
 BrandList.propTypes = {
-// eslint-disable-next-line react/no-unused-prop-types
-  fetchBrands: PropTypes.func.isRequired,
   brands: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   search: PropTypes.string.isRequired,
   setSearch: PropTypes.func.isRequired,
   goTo: PropTypes.func.isRequired,
+  openMenu: PropTypes.func.isRequired,
+  closeMenu: PropTypes.func.isRequired,
+  menuAnchor: PropTypes.shape(),
 };
 
-BrandList.defaultProps = {};
+BrandList.defaultProps = {
+  menuAnchor: null,
+};
 
-export default attach(P)(BrandList);
+const mapStateToProps = state => ({
+  brands: brandsAsArray(state),
+});
+
+export default connect(mapStateToProps)(attach(P)(BrandList));

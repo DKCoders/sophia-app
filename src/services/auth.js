@@ -1,7 +1,6 @@
 import axios from 'axios';
 import PATH from '../config/paths';
 
-// TODO: save token
 class Auth {
   static async login({ username, email, password }) {
     const response = await axios.post(`${PATH.apiUrl}/auth/login`, { username, email, password });

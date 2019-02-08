@@ -6,7 +6,17 @@ import {
   compose, withStateHandlers, didSubscribe, withHandlers,
 } from 'proppy';
 import { attach } from 'proppy-react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import withStyles from '@material-ui/core/styles/withStyles';
 import Auth from '../../services/auth';
+import logo from '../../assets/img/sophia-logo.png';
 
 const initialState = {
   isLogged: false, username: '', password: '', error: false,
@@ -27,7 +37,8 @@ const handlers = {
     setError,
     username,
     password,
-  }) => async () => {
+  }) => async (event) => {
+    event.preventDefault();
     if (await Auth.login({ username, password })) {
       checkToken();
     } else {
@@ -42,77 +53,87 @@ const P = compose(
   didSubscribe(({ checkToken }) => checkToken()),
 );
 
+const styles = theme => ({
+  main: {
+    width: 'auto',
+    display: 'block', // Fix IE 11 issue.
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+      width: 400,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+  },
+  paper: {
+    marginTop: theme.spacing.unit,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+  },
+  avatar: {
+    margin: theme.spacing.unit,
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing.unit,
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 3,
+  },
+});
+
 const Login = ({
-  isLogged, username, password, error, onLoginClick, onInputChange,
+  isLogged, username, password, onLoginClick, onInputChange, classes, error,
 }) => {
   const redirect = !isLogged ? null : <Redirect to="/" />;
   const errorNotification = !error ? null : (
-    <Notification danger>
+    <Typography color="error">
       Username, Email and Password incorrect.
-    </Notification>
+    </Typography>
   );
   const nodes = (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 10000,
-      }}
-    >
-      <Hero
-        light
-        fullheight
-      >
-        <HeroBody>
-          {redirect}
-          <Container textCentered>
-            <Column four offsetFour>
-              <Title text="grey">Login</Title>
-              <Subtitle text="grey">Please login to proceed.</Subtitle>
-              <Box>
-                <Image src="/static/img/sophia-logo.png" alt="Login img" ratio="2by1" style={{ marginBottom: 10 }} />
-                <Field>
-                  <Control>
-                    <Input
-                      large
-                      name="username"
-                      onChange={onInputChange}
-                      type="text"
-                      placeholder="Your Username or Email"
-                      value={username}
-                    />
-                  </Control>
-                </Field>
-                <Field>
-                  <Control>
-                    <Input
-                      large
-                      name="password"
-                      onChange={onInputChange}
-                      type="password"
-                      placeholder="Your Password"
-                      value={password}
-                    />
-                  </Control>
-                </Field>
-                {errorNotification}
-                <Button
-                  block
-                  info
-                  large
-                  fullwidth
-                  onClick={onLoginClick}
-                >
-                    Login
-                </Button>
-              </Box>
-            </Column>
-          </Container>
-        </HeroBody>
-      </Hero>
+    <div className={classes.main}>
+      {redirect}
+      <img src={logo} alt="Login img" ratio="2by1" />
+      <Paper className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <form className={classes.form}>
+          <FormControl margin="normal" required fullWidth>
+            <InputLabel htmlFor="email">Username or Email Address</InputLabel>
+            <Input
+              id="email"
+              name="username"
+              autoComplete="email"
+              autoFocus
+              onChange={onInputChange}
+              value={username}
+            />
+          </FormControl>
+          <FormControl margin="normal" required fullWidth>
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <Input name="password" type="password" id="password" autoComplete="current-password" onChange={onInputChange} value={password} />
+          </FormControl>
+          {errorNotification}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={onLoginClick}
+          >
+            Sign in
+          </Button>
+        </form>
+      </Paper>
     </div>
   );
   return ReactDOM.createPortal(nodes, document.getElementById('portal'));
@@ -125,6 +146,7 @@ Login.propTypes = {
   error: PropTypes.bool.isRequired,
   onLoginClick: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
+  classes: PropTypes.shape().isRequired,
 };
 
-export default attach(P)(Login);
+export default attach(P)(withStyles(styles)(Login));
