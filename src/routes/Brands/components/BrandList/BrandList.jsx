@@ -22,17 +22,19 @@ const P = compose(
     closeMenu: () => () => ({ item: null, menuAnchor: null }),
   }),
   withHandlers({
-    goTo: ({ history, closeMenu, item }) => () => {
-      history.push(`/brands/${item.id}`);
+    goTo: ({ history, closeMenu, item }) => (suffix = '') => {
+      history.push(`/brands/${item.id}${suffix}`);
       closeMenu();
     },
+    detailTo: ({ goTo }) => () => goTo(),
+    editTo: ({ goTo }) => () => goTo('/edit'),
   }),
 );
 
 
 // TODO: fix goTo
 const BrandList = ({
-  brands, search, setSearch, goTo, openMenu, menuAnchor, closeMenu,
+  brands, search, setSearch, openMenu, menuAnchor, closeMenu, editTo, detailTo,
 }) => {
   const filtered = !search ? brands : brands.filter(filterByQuery(search));
   const items = filtered.map(brand => (
@@ -42,7 +44,7 @@ const BrandList = ({
   ));
   return (
     <Fragment>
-      <RouteTitle title="Brands" onClick={goTo} />
+      <RouteTitle title="Brands" />
       <Grid container>
         <Grid item md={12}>
           <TextField
@@ -62,8 +64,8 @@ const BrandList = ({
         open={Boolean(menuAnchor)}
         onClose={closeMenu}
       >
-        <MenuItem onClick={goTo}>Details</MenuItem>
-        <MenuItem>Edit</MenuItem>
+        <MenuItem onClick={detailTo}>Details</MenuItem>
+        <MenuItem onClick={editTo}>Edit</MenuItem>
         <MenuItem>Clone</MenuItem>
         <MenuItem>Delete</MenuItem>
       </Menu>
@@ -75,7 +77,8 @@ BrandList.propTypes = {
   brands: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   search: PropTypes.string.isRequired,
   setSearch: PropTypes.func.isRequired,
-  goTo: PropTypes.func.isRequired,
+  detailTo: PropTypes.func.isRequired,
+  editTo: PropTypes.func.isRequired,
   openMenu: PropTypes.func.isRequired,
   closeMenu: PropTypes.func.isRequired,
   menuAnchor: PropTypes.shape(),

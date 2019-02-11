@@ -15,10 +15,10 @@ const effects = {
     try {
       const data = await api.patchBrand(brandId, patch);
       this.updateBrand(data);
-      resolve();
+      if (resolve) resolve();
     } catch (err) {
       console.log(err);
-      reject(err);
+      if (reject) reject(err);
     }
   },
 };

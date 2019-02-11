@@ -1,90 +1,66 @@
 /* eslint-disable no-underscore-dangle */
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Title as SophiaTitle,
-  Subtitle,
-  Columns,
-  Column,
-  Image,
-  Hero,
-  HeroBody,
-  Container,
-} from 'sophia-components';
-import { withHandlers, compose, didSubscribe, withState } from 'proppy';
+import { Link } from 'react-router-dom';
+import { withHandlers } from 'proppy';
 import { attach } from 'proppy-react';
-import withEditable from '../../../../hoc/withEditable';
-import Popover from '../../../../components/Popover';
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import Fab from '@material-ui/core/Fab';
+import EditIcon from '@material-ui/icons/Edit';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import * as brandSelectors from '../../../../modules/brand/selectors';
 
-const Title = withEditable(SophiaTitle);
+const styles = () => ({
+  logo: {
+    height: 200,
+    width: 200,
+  },
+});
 
-const Paragraph = withEditable(({ children, ...props }) => <p {...props}>{children}</p>);
-
-const P = compose(
-  withState('top', 'setTop', null),
-  withState('left', 'setLeft', null),
-  withHandlers({
-    onSaveClick: ({ brand: { _id: brandId }, patchBrand }) =>
-      (value, data, resolve, reject) =>
-        patchBrand({
-          brandId, patch: { [data]: value }, resolve, reject,
-        }),
+const P = withHandlers({
+  onSaveClick: ({
+    brand: { _id: brandId },
+  }, { dispatch }) => (value, data, resolve, reject) => dispatch.brand.patchBrand({
+    brandId, patch: { [data]: value }, resolve, reject,
   }),
-  didSubscribe((props) => {
-    const name = document.getElementById('brand-name');
-    const { top, left } = name.getBoundingClientRect();
-    props.setTop(top);
-    props.setLeft(left);
-  }),
-);
+});
 
 const BrandView = ({
-  brand, onSaveClick, top, left,
+  brand, classes,
 }) => (!brand ? null : (
-  <Fragment>
-    <Hero light>
-      <HeroBody>
-        <Container>
-          <Columns>
-            <Column two>
-              <Image src={brand.logo} alt="brand logo" ratio="square" />
-            </Column>
-            <Column>
-              <Title
-                six
-                marginless
-                data="code"
-                onSaveClick={onSaveClick}
-              >
-                {brand.code}
-              </Title>
-              <SophiaTitle id="brand-name">
-                {brand.name}
-              </SophiaTitle>
-              <Popover active top={top} left={left}>
-                PopoverTest
-              </Popover>
-              <Subtitle six><strong>Origin:</strong> {brand.origin}</Subtitle>
-              <Paragraph data="description">{brand.description}</Paragraph>
-            </Column>
-          </Columns>
-        </Container>
-      </HeroBody>
-    </Hero>
-  </Fragment>
+  <>
+    <IconButton component={Link} to="/brands"><ArrowBackIcon /></IconButton>
+    <Typography variant="h2">Brand</Typography>
+    <Avatar alt="Brand logo" src={brand.logo} className={classes.logo} />
+    <Typography variant="h4">{brand.code}</Typography>
+    <Typography variant="h3">{brand.name}</Typography>
+    <Typography variant="h6">
+      Origin:
+      {brand.origin}
+    </Typography>
+    <Typography>{brand.description}</Typography>
+    <Fab color="secondary" aria-label="Edit" component={Link} to={`/brands/${brand._id}/edit`}>
+      <EditIcon />
+    </Fab>
+  </>
 ));
 
 BrandView.propTypes = {
+  classes: PropTypes.shape().isRequired,
   brand: PropTypes.shape(),
   onSaveClick: PropTypes.func.isRequired,
-  top: PropTypes.number,
-  left: PropTypes.number,
 };
 
 BrandView.defaultProps = {
   brand: null,
-  top: null,
-  left: null,
 };
 
-export default attach(P)(BrandView);
+const mapStateToProps = (state, { match: { params: { id } } }) => ({
+  brand: brandSelectors.brandById(state, { id }),
+});
+
+export default withStyles(styles)(connect(mapStateToProps)(attach(P)(BrandView)));
