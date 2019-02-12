@@ -23,7 +23,7 @@ const P = compose(
   }),
   withHandlers({
     goTo: ({ history, closeMenu, item }) => (suffix = '') => {
-      history.push(`/brands/${item.id}${suffix}`);
+      history.push(`/brands/${item._id}${suffix}`);
       closeMenu();
     },
     detailTo: ({ goTo }) => () => goTo(),
