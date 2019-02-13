@@ -7,8 +7,8 @@ import { ProppyProvider } from 'proppy-react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
-
 import models from './modules';
+import 'react-image-crop/dist/ReactCrop.css';
 
 const store = init({
   models,

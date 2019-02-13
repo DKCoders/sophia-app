@@ -1,5 +1,5 @@
 import axios from 'axios';
-import PATH from '../config/paths';
+import * as PATH from '../config/paths';
 
 class Auth {
   static async login({ username, email, password }) {

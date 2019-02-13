@@ -8,6 +8,7 @@ module.exports = {
         'document': true,
         'location': true,
         'localStorage': true,
+        'FileReader': true,
     },
     'env': {},
     'plugins': [],
