@@ -7,8 +7,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
 import ReactCrop from 'react-image-crop';
+import Dropzone from 'react-dropzone';
 import uuidv4 from 'uuid/v4';
 import api from '../../services/api';
 import { apiUrl } from '../../config/paths';
@@ -66,11 +66,11 @@ const P = compose(
     y: 0,
   }),
   withHandlers({
-    onSelectFile: ({ setSrc }) => (event) => {
-      if (event.target.files && event.target.files.length > 0) {
+    onSelectFile: ({ setSrc }) => (accepted) => {
+      if (accepted && accepted.length > 0) {
         const reader = new FileReader();
         reader.addEventListener('load', () => setSrc(reader.result));
-        reader.readAsDataURL(event.target.files[0]);
+        reader.readAsDataURL(accepted[0]);
       }
     },
     onCropComplete: ({
@@ -118,10 +118,22 @@ const PhotoCropUpload = ({
     <DialogTitle>Change Logo</DialogTitle>
     <DialogContent>
       <div>
-        <div>
-          <Input type="file" onChange={onSelectFile} />
-        </div>
-        {src && (
+        {!src ? (
+          <div>
+            <Dropzone
+              accept="image/png, image/jpeg, image/gif"
+              onDrop={onSelectFile}
+            >
+              {({ getRootProps, getInputProps }) => (
+                <div {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <p>Try dropping some files here, or click to select files to upload.</p>
+                  <p>Only *.jpeg and *.png images will be accepted</p>
+                </div>
+              )}
+            </Dropzone>
+          </div>
+        ) : (
           <ReactCrop
             src={src}
             crop={crop}
