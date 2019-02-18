@@ -17,6 +17,7 @@
     "ramda": "^0.26.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-dropzone": "^8.1.0",
     "react-image-crop": "^6.0.12",
     "react-image-file": "^0.3.0",
     "react-redux": "^6.0.0",

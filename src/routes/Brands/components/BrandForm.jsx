@@ -14,7 +14,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import PhotoCropUpload from '../../../components/PhotoCropUpload';
+import photoCropUpload from '../../../services/photoCropUpload';
 
 const styles = () => ({
   logo: {
@@ -42,7 +42,6 @@ const textFieldProps = {
 
 const P = compose(
   withState('loading', 'setLoading', false),
-  withState('openModal', 'setOpenModal', false),
   withStateHandlers({
     code: '',
     name: '',
@@ -59,6 +58,10 @@ const P = compose(
     setLogo: () => logo => ({ logo }),
   }),
   withHandlers({
+    onChangeLogoClick: ({ setLogo }) => async () => {
+      const url = await photoCropUpload.show();
+      if (url) setLogo(url);
+    },
     onSaveClick: ({
       brandId, code, name, description, origin, logo, setLoading, onSaveComplete,
     }, { dispatch }) => () => {
@@ -92,70 +95,61 @@ const BrandForm = ({
   onSaveClick,
   loading,
   onCancelClick,
-  setLogo,
-  openModal,
-  setOpenModal,
+  onChangeLogoClick,
 }) => (
-  <>
-    <PhotoCropUpload
-      open={openModal}
-      onSaveDone={setLogo}
-      onClose={() => setOpenModal(false)}
-    />
-    <Card>
-      <CardContent>
-        <TextField
-          label="Code"
-          value={code}
-          name="code"
-          required
-          onChange={onChange}
-          {...textFieldProps}
+  <Card>
+    <CardContent>
+      <TextField
+        label="Code"
+        value={code}
+        name="code"
+        required
+        onChange={onChange}
+        {...textFieldProps}
+      />
+      <TextField
+        label="Name"
+        value={name}
+        name="name"
+        required
+        onChange={onChange}
+        {...textFieldProps}
+      />
+      <TextField
+        label="Origin"
+        value={origin}
+        name="origin"
+        onChange={onChange}
+        {...textFieldProps}
+      />
+      <TextField
+        label="Description"
+        value={description}
+        name="description"
+        multiline
+        onChange={onChange}
+        {...textFieldProps}
+      />
+      <FormControl variant="outlined">
+        <InputLabel variant="outlined" shrink filled>Logo</InputLabel>
+        <InputBase
+          inputComponent={() => (
+            <div>
+              <img src={logo} alt="initial-logo" className={classes.logo} />
+              <Button variant="outlined" onClick={onChangeLogoClick}>Change logo</Button>
+            </div>
+          )}
         />
-        <TextField
-          label="Name"
-          value={name}
-          name="name"
-          required
-          onChange={onChange}
-          {...textFieldProps}
-        />
-        <TextField
-          label="Origin"
-          value={origin}
-          name="origin"
-          onChange={onChange}
-          {...textFieldProps}
-        />
-        <TextField
-          label="Description"
-          value={description}
-          name="description"
-          multiline
-          onChange={onChange}
-          {...textFieldProps}
-        />
-        <FormControl variant="outlined">
-          <InputLabel variant="outlined" shrink filled>Logo</InputLabel>
-          <InputBase
-            inputComponent={() => (
-              <div>
-                <img src={logo} alt="initial-logo" className={classes.logo} />
-                <Button variant="outlined" onClick={() => setOpenModal(true)}>Change logo</Button>
-              </div>
-            )}
-          />
-        </FormControl>
-      </CardContent>
-      <CardActions>
-        <Button onClick={onCancelClick}>Cancel</Button>
-        <div style={{ position: 'relative' }}>
-          <Button variant="contained" color="primary" onClick={onSaveClick} disabled={loading}>Save</Button>
-          {loading && <CircularProgress size={24} color="primary" className={classes.progressButton} />}
-        </div>
-      </CardActions>
-    </Card>
-  </>
+      </FormControl>
+    </CardContent>
+    <CardActions>
+      <Button onClick={onCancelClick}>Cancel</Button>
+      <div style={{ position: 'relative' }}>
+        <Button variant="contained" color="primary" onClick={onSaveClick} disabled={loading}>Save</Button>
+        {loading && <CircularProgress size={24} color="primary" className={classes.progressButton} />}
+      </div>
+    </CardActions>
+  </Card>
 );
 
 BrandForm.propTypes = {
@@ -170,6 +164,7 @@ BrandForm.propTypes = {
   onCancelClick: PropTypes.func,
   onSaveClick: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
+  onChangeLogoClick: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
 };
 
