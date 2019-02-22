@@ -11,9 +11,10 @@ import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import RouteTitle from '../../../../components/RouteTitle/index';
+import BrandCard from './components/BrandCard';
 import { filterByQuery } from '../../../../utils/helpers';
 import { brandsAsArray } from '../../../../modules/brand/selectors';
-import BrandCard from './components/BrandCard';
+import confirmDialog from '../../../../services/confirmDialog';
 
 const P = compose(
   withState('search', 'setSearch', ''),
@@ -28,13 +29,26 @@ const P = compose(
     },
     detailTo: ({ goTo }) => () => goTo(),
     editTo: ({ goTo }) => () => goTo('/edit'),
+    cloneTo: ({ goTo }) => () => goTo('/clone'),
+    onDeleteClick: ({ item, closeMenu }, { dispatch }) => async () => {
+      const confirm = await confirmDialog.show({
+        title: 'Confirmation',
+        content: `Are you sure in deleting "${item.name}"?`,
+        confirmText: 'Delete it!',
+        cancelText: 'No',
+      });
+      if (confirm) {
+        dispatch.brand.removeBrand({ brandId: item._id });
+      }
+      closeMenu();
+    },
   }),
 );
 
 
 // TODO: fix goTo
 const BrandList = ({
-  brands, search, setSearch, openMenu, menuAnchor, closeMenu, editTo, detailTo,
+  brands, search, setSearch, openMenu, menuAnchor, closeMenu, editTo, detailTo, cloneTo, onDeleteClick,
 }) => {
   const filtered = !search ? brands : brands.filter(filterByQuery(search));
   const items = filtered.map(brand => (
@@ -66,8 +80,8 @@ const BrandList = ({
       >
         <MenuItem onClick={detailTo}>Details</MenuItem>
         <MenuItem onClick={editTo}>Edit</MenuItem>
-        <MenuItem>Clone</MenuItem>
-        <MenuItem>Delete</MenuItem>
+        <MenuItem onClick={cloneTo}>Clone</MenuItem>
+        <MenuItem onClick={onDeleteClick}>Delete</MenuItem>
       </Menu>
     </Fragment>
   );
@@ -79,8 +93,10 @@ BrandList.propTypes = {
   setSearch: PropTypes.func.isRequired,
   detailTo: PropTypes.func.isRequired,
   editTo: PropTypes.func.isRequired,
+  cloneTo: PropTypes.func.isRequired,
   openMenu: PropTypes.func.isRequired,
   closeMenu: PropTypes.func.isRequired,
+  onDeleteClick: PropTypes.func.isRequired,
   menuAnchor: PropTypes.shape(),
 };
 

@@ -10,20 +10,25 @@ import * as brandSelectors from '../../../modules/brand/selectors';
 import BrandForm from './BrandForm';
 
 const P = withHandlers({
-  onSaveComplete: ({ history, brand }) => () => {
-    history.replace(`/brands/${brand._id}`);
+  onSaveComplete: ({ history, brand }) => (redirectId = null) => {
+    history.replace(`/brands/${redirectId || brand._id}`);
+  },
+  onCancelClick: ({ history, brand, isNew }) => () => {
+    history.replace(`/brands/${isNew ? '' : brand._id}`);
   },
 });
 
-const BrandEdit = ({ brand, onSaveComplete }) => (
+const BrandEdit = ({
+  brand, onSaveComplete, isClone, isNew, onCancelClick,
+}) => (
   <Grid container justify="center">
     <Grid item>
       <Typography variant="h2" align="center">Edit Brand</Typography>
       {!brand ? <CircularProgress /> : (
         <BrandForm
           initial={brand}
-          brandId={brand._id}
-          onCancelClick={onSaveComplete}
+          brandId={!isClone && !isNew ? brand._id : null}
+          onCancelClick={onCancelClick}
           onSaveComplete={onSaveComplete}
         />
       )}
@@ -34,14 +39,27 @@ const BrandEdit = ({ brand, onSaveComplete }) => (
 BrandEdit.propTypes = {
   brand: PropTypes.shape(),
   onSaveComplete: PropTypes.func.isRequired,
+  onCancelClick: PropTypes.func.isRequired,
+  isClone: PropTypes.bool,
+  isNew: PropTypes.bool,
 };
 
 BrandEdit.defaultProps = {
   brand: null,
+  isClone: false,
+  isNew: false,
 };
 
-const mapStateToProps = (state, { match: { params: { id } } }) => ({
-  brand: brandSelectors.brandById(state, { id }),
+const newBrand = {
+  code: '',
+  name: '',
+  description: '',
+  origin: '',
+  logo: '',
+};
+
+const mapStateToProps = (state, { match: { params: { id } }, isNew }) => ({
+  brand: !isNew ? brandSelectors.brandById(state, { id }) : newBrand,
 });
 
 export default connect(mapStateToProps)(attach(P)(BrandEdit));

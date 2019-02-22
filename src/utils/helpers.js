@@ -1,5 +1,7 @@
-/* eslint-disable no-nested-ternary */
-import { path } from 'ramda';
+/* eslint-disable no-nested-ternary,no-unused-vars */
+import {
+  reduce, map, join, compose, filter, path,
+} from 'ramda';
 
 export const padStart = number => number.toString().padStart(2, '0');
 
@@ -84,8 +86,53 @@ export const debounce = (fn, interval) => {
   };
 };
 
-
 export const fieldExtractor = (field, object) => {
   const fields = field.split('.');
   return path(fields, object);
 };
+
+export const mapValidationByType = compose(
+  Object.entries,
+  reduce((acum, [property, validations]) => {
+    validations.forEach((validation) => {
+      if (!acum[validation]) {
+        // eslint-disable-next-line no-param-reassign
+        acum[validation] = [];
+      }
+      acum[validation].push(property);
+    });
+    return acum;
+  }, {}),
+  Object.entries,
+);
+
+export const validations = {
+  required: str => !!str,
+};
+
+export const validationsMessages = {
+  required: 'Field required',
+};
+
+export const formatFromTo = (from, to) => {
+  const fromFormat = `${from.substr(0, 2)}:${from.substr(2)}`;
+  const toFormat = `${to.substr(0, 2)}:${to.substr(2)}`;
+  return `${fromFormat} - ${toFormat}`;
+};
+
+const entriesJoiner = compose(
+  join('&'),
+  map(([key, value]) => `${key}=${value}`),
+  filter(([key, value]) => value !== undefined),
+);
+
+export const objectToQueryParams = (params = {}) => {
+  const entries = Object.entries(params);
+  if (!entries.length) {
+    return '';
+  }
+  return `?${entriesJoiner(entries)}`;
+};
+
+// propertyExtractor(obj, [paths])
+export const propertyExtractor = reduce((acum, _path) => acum[_path]);

@@ -9,10 +9,15 @@ import BrandEdit from './components/BrandEdit';
 
 const P = didSubscribe((props, { dispatch }) => dispatch.brand.fetchBrands());
 
+const BrandClone = props => <BrandEdit isClone {...props} />;
+const BrandNew = props => <BrandEdit isNew {...props} />;
+
 const Brands = ({ match }) => (
   <Switch>
     <Route exact path={match.url} component={BrandList} />
+    <Route path={`${match.url}/new`} component={BrandNew} />
     <Route path={`${match.url}/:id/edit`} component={BrandEdit} />
+    <Route path={`${match.url}/:id/clone`} component={BrandClone} />
     <Route path={`${match.url}/:id`} component={BrandView} />
   </Switch>
 );

@@ -9,12 +9,22 @@ class Api {
   }
 
   static async getBrands() {
-    const response = await axios.get(`${apiUrl}/brands`, Api.authHeader);
+    const response = await axios.get(`${apiUrl}/brands?!audit._deletedAt`, Api.authHeader);
     return response.data.data;
   }
 
   static async patchBrand(brandId, patch) {
     const response = await axios.patch(`${apiUrl}/brands/${brandId}`, patch, Api.authHeader);
+    return response.data.data;
+  }
+
+  static async postBrand(post) {
+    const response = await axios.post(`${apiUrl}/brands`, post, Api.authHeader);
+    return response.data.data;
+  }
+
+  static async deleteBrand(brandId) {
+    const response = await axios.delete(`${apiUrl}/brands/${brandId}`, Api.authHeader);
     return response.data.data;
   }
 

@@ -13,9 +13,19 @@ const effects = {
     brandId, patch, resolve, reject,
   }) {
     try {
-      const data = await api.patchBrand(brandId, patch);
+      const data = brandId ? await api.patchBrand(brandId, patch) : await api.postBrand(patch);
       this.updateBrand(data);
-      if (resolve) resolve();
+      if (resolve) resolve(data._id);
+    } catch (err) {
+      console.log(err);
+      if (reject) reject(err);
+    }
+  },
+  async removeBrand({ brandId, resolve, reject }) {
+    try {
+      await api.deleteBrand(brandId);
+      this.deleteBrand([brandId]);
+      if (resolve) resolve(brandId);
     } catch (err) {
       console.log(err);
       if (reject) reject(err);

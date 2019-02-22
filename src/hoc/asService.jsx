@@ -4,7 +4,12 @@ import { render } from 'react-dom';
 let resolve;
 let reject;
 const asService = ({
-  activeProp, resolveProp, rejectProp, forceResolve = false, rejectValue = null,
+  activeProp,
+  resolveProp,
+  rejectProp,
+  forceResolveOnReject = false,
+  rejectValue = null,
+  resolveValue,
 } = {}) => (Comp) => {
   class AsService extends Component {
     static create(props = {}) {
@@ -29,7 +34,7 @@ const asService = ({
 
     handleCancel() {
       this.setState({ isOpen: false });
-      if (forceResolve) {
+      if (forceResolveOnReject) {
         resolve(rejectValue);
       } else {
         reject(rejectValue);
@@ -38,7 +43,11 @@ const asService = ({
 
     handleConfirm(...params) {
       this.setState({ isOpen: false });
-      resolve(...params);
+      if (resolveValue !== undefined) {
+        resolve(resolveValue);
+      } else {
+        resolve(...params);
+      }
     }
 
     show(props = {}) {

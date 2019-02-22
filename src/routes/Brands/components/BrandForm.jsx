@@ -14,7 +14,9 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
 import photoCropUpload from '../../../services/photoCropUpload';
+import { mapValidationByType, validations, validationsMessages } from '../../../utils/helpers';
 
 const styles = () => ({
   logo: {
@@ -40,8 +42,16 @@ const textFieldProps = {
   fullWidth: true,
 };
 
+const fieldValidations = {
+  code: ['required'],
+  name: ['required'],
+};
+
+const mappedByValidationTypeEntries = mapValidationByType(fieldValidations);
+
 const P = compose(
   withState('loading', 'setLoading', false),
+  withState('generalError', 'setGeneralError', null),
   withStateHandlers({
     code: '',
     name: '',
@@ -57,19 +67,60 @@ const P = compose(
     onChange: () => ({ target: { name, value } }) => ({ [name]: value }),
     setLogo: () => logo => ({ logo }),
   }),
+  withStateHandlers({
+    dirty: [],
+  }, {
+    pushDirty: ({ dirty }) => name => ({ dirty: [...dirty, name] }),
+  }),
+  withStateHandlers({
+    errors: {},
+  }, {
+    checkErrors: props => () => {
+      const errors = mappedByValidationTypeEntries.reduce((acum, [type, keys]) => {
+        keys.forEach((key) => {
+          if (!validations[type](props[key])) {
+            // eslint-disable-next-line no-param-reassign
+            acum[key] = validationsMessages[type];
+          }
+        });
+        return acum;
+      }, {});
+      return { errors };
+    },
+  }),
   withHandlers({
-    onChangeLogoClick: ({ setLogo }) => async () => {
+    checkDirty: ({ pushDirty, dirty }) => ({ target: { name } }) => {
+      if (!dirty.includes(name)) {
+        pushDirty(name);
+      }
+    },
+    validationHook: ({ onChange, checkErrors, checkDirty }) => (...params) => {
+      onChange(...params);
+      checkDirty(...params);
+      checkErrors();
+    },
+  }),
+  withHandlers({
+    onChangeLogoClick: ({ setLogo, checkDirty }) => async () => {
       const url = await photoCropUpload.show();
-      if (url) setLogo(url);
+      if (url) {
+        setLogo(url);
+        checkDirty({ target: { name: 'logo' } });
+      }
     },
     onSaveClick: ({
-      brandId, code, name, description, origin, logo, setLoading, onSaveComplete,
+      brandId, code, name, description, origin, logo, setLoading, onSaveComplete, setGeneralError,
     }, { dispatch }) => () => {
-      const resolve = () => {
+      const resolve = (redirectId) => {
         setLoading(false);
-        if (onSaveComplete) onSaveComplete();
+        if (onSaveComplete) onSaveComplete(redirectId);
       };
-      const reject = resolve;
+      const reject = (err) => {
+        setLoading(false);
+        const errMessage = err.response.data.message;
+        const message = !errMessage.includes('E11000') ? errMessage : 'Duplicated code';
+        setGeneralError(message);
+      };
       setLoading(true);
       dispatch.brand.patchBrand({
         brandId,
@@ -91,11 +142,14 @@ const BrandForm = ({
   description,
   origin,
   logo,
-  onChange,
+  validationHook,
   onSaveClick,
   loading,
   onCancelClick,
   onChangeLogoClick,
+  errors,
+  generalError,
+  dirty,
 }) => (
   <Card>
     <CardContent>
@@ -104,7 +158,9 @@ const BrandForm = ({
         value={code}
         name="code"
         required
-        onChange={onChange}
+        onChange={validationHook}
+        error={!!dirty.code && !!errors.code}
+        helperText={!!dirty.code && !!errors.code && errors.code}
         {...textFieldProps}
       />
       <TextField
@@ -112,14 +168,16 @@ const BrandForm = ({
         value={name}
         name="name"
         required
-        onChange={onChange}
+        onChange={validationHook}
+        error={!!dirty.name && !!errors.name}
+        helperText={!!dirty.name && !!errors.name && errors.name}
         {...textFieldProps}
       />
       <TextField
         label="Origin"
         value={origin}
         name="origin"
-        onChange={onChange}
+        onChange={validationHook}
         {...textFieldProps}
       />
       <TextField
@@ -127,7 +185,7 @@ const BrandForm = ({
         value={description}
         name="description"
         multiline
-        onChange={onChange}
+        onChange={validationHook}
         {...textFieldProps}
       />
       <FormControl variant="outlined">
@@ -141,11 +199,12 @@ const BrandForm = ({
           )}
         />
       </FormControl>
+      {!!generalError && <Typography color="error">{generalError}</Typography>}
     </CardContent>
     <CardActions>
       <Button onClick={onCancelClick}>Cancel</Button>
       <div style={{ position: 'relative' }}>
-        <Button variant="contained" color="primary" onClick={onSaveClick} disabled={loading}>Save</Button>
+        <Button variant="contained" color="primary" onClick={onSaveClick} disabled={loading || !!Object.keys(errors).length || !dirty.length}>Save</Button>
         {loading && <CircularProgress size={24} color="primary" className={classes.progressButton} />}
       </div>
     </CardActions>
@@ -163,7 +222,7 @@ BrandForm.propTypes = {
   onSaveComplete: PropTypes.func,
   onCancelClick: PropTypes.func,
   onSaveClick: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired,
+  validationHook: PropTypes.func.isRequired,
   onChangeLogoClick: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
 };
