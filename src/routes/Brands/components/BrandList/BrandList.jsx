@@ -6,10 +6,13 @@ import {
 } from 'proppy';
 import { attach } from 'proppy-react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import RouteTitle from '../../../../components/RouteTitle/index';
 import BrandCard from './components/BrandCard';
 import { filterByQuery } from '../../../../utils/helpers';
@@ -42,18 +45,22 @@ const P = compose(
       }
       closeMenu();
     },
+    onClickCard: ({ history, closeMenu }) => ({ _id }) => {
+      history.push(`/brands/${_id}`);
+      closeMenu();
+    },
   }),
 );
 
 
 // TODO: fix goTo
 const BrandList = ({
-  brands, search, setSearch, openMenu, menuAnchor, closeMenu, editTo, detailTo, cloneTo, onDeleteClick,
+  brands, search, setSearch, openMenu, menuAnchor, closeMenu, editTo, detailTo, cloneTo, onDeleteClick, onClickCard,
 }) => {
   const filtered = !search ? brands : brands.filter(filterByQuery(search));
   const items = filtered.map(brand => (
     <Grid item md={3} key={brand._id}>
-      <BrandCard brand={brand} onMoreClick={openMenu} />
+      <BrandCard brand={brand} onMoreClick={openMenu} onClick={onClickCard} />
     </Grid>
   ));
   return (
@@ -73,6 +80,9 @@ const BrandList = ({
       <Grid container spacing={8}>
         {items}
       </Grid>
+      <Fab color="secondary" aria-label="Edit" component={Link} to="/brands/new">
+        <AddIcon />
+      </Fab>
       <Menu
         anchorEl={menuAnchor}
         open={Boolean(menuAnchor)}
@@ -97,6 +107,7 @@ BrandList.propTypes = {
   openMenu: PropTypes.func.isRequired,
   closeMenu: PropTypes.func.isRequired,
   onDeleteClick: PropTypes.func.isRequired,
+  onClickCard: PropTypes.func.isRequired,
   menuAnchor: PropTypes.shape(),
 };
 

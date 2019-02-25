@@ -10,6 +10,12 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
+const StyledCard = withStyles({
+  root: {
+    cursor: 'pointer',
+  },
+})(Card);
+
 const StyledCardHeader = withStyles({
   content: { minWidth: 0 },
 })(CardHeader);
@@ -27,10 +33,13 @@ const P = withHandlers({
   onMoreButtonClick: ({ brand, onMoreClick }) => (event) => {
     if (onMoreClick) onMoreClick(brand, event);
   },
+  onClickCard: ({ brand, onClick }) => (event) => {
+    if (onClick) onClick(brand, event);
+  },
 });
 
-const BrandCard = ({ brand, onMoreButtonClick }) => (
-  <Card>
+const BrandCard = ({ brand, onMoreButtonClick, onClickCard }) => (
+  <StyledCard onClick={onClickCard}>
     <StyledCardHeader
       avatar={(<BigAvatar><img src={brand.logo} alt={`${brand.name} logo`} /></BigAvatar>)}
       title={brand.name}
@@ -38,17 +47,20 @@ const BrandCard = ({ brand, onMoreButtonClick }) => (
       action={(<IconButton onClick={onMoreButtonClick}><MoreVertIcon /></IconButton>)}
       titleTypographyProps={cardHeaderTypographyProps}
     />
-  </Card>
+  </StyledCard>
 );
 
 BrandCard.propTypes = {
   brand: PropTypes.shape().isRequired,
   onMoreClick: PropTypes.func,
+  onClick: PropTypes.func,
   onMoreButtonClick: PropTypes.func.isRequired,
+  onClickCard: PropTypes.func.isRequired,
 };
 
 BrandCard.defaultProps = {
   onMoreClick: null,
+  onClick: null,
 };
 
 export default attach(P)(BrandCard);
