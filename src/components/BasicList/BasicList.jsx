@@ -26,7 +26,7 @@ const P = compose(
     goTo: ({
       history, closeMenu, item, mainRoute,
     }) => (suffix = '') => {
-      history.push(`/${mainRoute}/${item._id}${suffix}`);
+      history.push(`${mainRoute}/${item._id}${suffix}`);
       closeMenu();
     },
     detailTo: ({ goTo }) => () => goTo(),
@@ -46,7 +46,7 @@ const P = compose(
       closeMenu();
     },
     onClickCard: ({ history, closeMenu, mainRoute }) => ({ _id }) => {
-      history.push(`/${mainRoute}/${_id}`);
+      history.push(`${mainRoute}/${_id}`);
       closeMenu();
     },
   }),
