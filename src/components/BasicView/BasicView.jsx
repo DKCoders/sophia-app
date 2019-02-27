@@ -8,8 +8,8 @@ import Fab from '@material-ui/core/Fab';
 import EditIcon from '@material-ui/icons/Edit';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { connect } from 'react-redux';
-import BasicInfo from '../../../../components/BasicInfo';
-import * as brandSelectors from '../../../../modules/brand/selectors';
+import BasicInfo from '../BasicInfo';
+import * as brandSelectors from '../../modules/brand/selectors';
 
 const BrandView = ({ brand }) => (!brand ? null : (
   <>

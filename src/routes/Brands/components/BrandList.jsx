@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import BasicList from '../../../../components/BasicList';
-import { brandsAsArray } from '../../../../modules/brand/selectors';
+import BasicList from '../../../components/BasicList';
+import { brandsAsArray } from '../../../modules/brand/selectors';
 
 const mapStateToProps = state => ({
   items: brandsAsArray(state),
