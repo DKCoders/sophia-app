@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import BrandList from './components/BrandList';
 import BrandView from './components/BrandView';
 import BrandEdit from './components/BrandEdit';
+import BrandForm from './components/BrandForm';
 
 const listProperties = {
   title: 'name',
@@ -27,9 +28,6 @@ const additionalNodes = item => (
 
 const P = didSubscribe((props, { dispatch }) => dispatch.brand.fetchBrands());
 
-const BrandClone = props => <BrandEdit isClone {...props} />;
-const BrandNew = props => <BrandEdit isNew {...props} />;
-
 const Brands = ({ match }) => (
   <Switch>
     <Route
@@ -44,9 +42,41 @@ const Brands = ({ match }) => (
         />
       )}
     />
-    <Route path={`${match.url}/new`} component={BrandNew} />
-    <Route path={`${match.url}/:id/edit`} component={BrandEdit} />
-    <Route path={`${match.url}/:id/clone`} component={BrandClone} />
+    <Route
+      path={`${match.url}/new`}
+      render={props => (
+        <BrandEdit
+          FormComponent={BrandForm}
+          routeTitle="New Brand"
+          isNew
+          mainRoute={match.url}
+          {...props}
+        />
+      )}
+    />
+    <Route
+      path={`${match.url}/:id/edit`}
+      render={props => (
+        <BrandEdit
+          FormComponent={BrandForm}
+          routeTitle="Edit Brand"
+          isClone
+          mainRoute={match.url}
+          {...props}
+        />
+      )}
+    />
+    <Route
+      path={`${match.url}/:id/clone`}
+      render={props => (
+        <BrandEdit
+          FormComponent={BrandForm}
+          routeTitle="New Brand"
+          mainRoute={match.url}
+          {...props}
+        />
+      )}
+    />
     <Route
       path={`${match.url}/:id`}
       render={props => (

@@ -101,7 +101,7 @@ const BasicList = ({
       <Grid container spacing={8}>
         {listItems}
       </Grid>
-      <Fab color="secondary" aria-label="Edit" component={Link} to={`/${mainRoute}/new`}>
+      <Fab color="secondary" aria-label="Edit" component={Link} to={`${mainRoute}/new`}>
         <AddIcon />
       </Fab>
       <Menu
