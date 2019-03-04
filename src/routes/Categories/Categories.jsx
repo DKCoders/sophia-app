@@ -4,39 +4,33 @@ import { Route, Switch } from 'react-router-dom';
 import { didSubscribe } from 'proppy';
 import { attach } from 'proppy-react';
 import Typography from '@material-ui/core/Typography';
-import BrandList from './components/BrandList';
-import BrandView from './components/BrandView';
-import BrandEdit from './components/BrandEdit';
-import BrandForm from './components/BrandForm';
+import CategoryList from './components/CategoryList';
+import CategoryView from './components/CategoryView';
+import CategoryEdit from './components/CategoryEdit';
+import CategoryForm from './components/CategoryForm';
 
 const listProperties = {
   title: 'name',
   subtitle: 'code',
-  avatarSrc: 'logo',
+  avatarSrc: 'img',
   avatarAlt: 'name',
 };
 
 const additionalNodes = item => (
-    <>
-      <Typography variant="h6">
-        Origin:
-        {item.origin}
-      </Typography>
-      <Typography>{item.description}</Typography>
-    </>
+  <Typography>{item.description}</Typography>
 );
 
-const P = didSubscribe((props, { dispatch }) => dispatch.brand.fetchBrands());
+const P = didSubscribe((props, { dispatch }) => dispatch.category.fetchCategories());
 
-const Brands = ({ match }) => (
+const Categories = ({ match }) => (
   <Switch>
     <Route
       exact
       path={match.url}
       render={props => (
-        <BrandList
+        <CategoryList
           properties={listProperties}
-          routeTitle="Brands"
+          routeTitle="Categories"
           mainRoute={match.url}
           {...props}
         />
@@ -45,9 +39,9 @@ const Brands = ({ match }) => (
     <Route
       path={`${match.url}/new`}
       render={props => (
-        <BrandEdit
-          FormComponent={BrandForm}
-          routeTitle="New Brand"
+        <CategoryEdit
+          FormComponent={CategoryForm}
+          routeTitle="New Category"
           isNew
           mainRoute={match.url}
           {...props}
@@ -57,9 +51,9 @@ const Brands = ({ match }) => (
     <Route
       path={`${match.url}/:id/edit`}
       render={props => (
-        <BrandEdit
-          FormComponent={BrandForm}
-          routeTitle="Edit Brand"
+        <CategoryEdit
+          FormComponent={CategoryForm}
+          routeTitle="Edit Category"
           mainRoute={match.url}
           {...props}
         />
@@ -68,9 +62,9 @@ const Brands = ({ match }) => (
     <Route
       path={`${match.url}/:id/clone`}
       render={props => (
-        <BrandEdit
-          FormComponent={BrandForm}
-          routeTitle="New Brand"
+        <CategoryEdit
+          FormComponent={CategoryForm}
+          routeTitle="New Category"
           isClone
           mainRoute={match.url}
           {...props}
@@ -80,9 +74,9 @@ const Brands = ({ match }) => (
     <Route
       path={`${match.url}/:id`}
       render={props => (
-        <BrandView
+        <CategoryView
           properties={listProperties}
-          routeTitle="Brand"
+          routeTitle="Category"
           mainRoute={match.url}
           additionalNodes={additionalNodes}
           {...props}
@@ -92,10 +86,10 @@ const Brands = ({ match }) => (
   </Switch>
 );
 
-Brands.propTypes = {
+Categories.propTypes = {
   match: PropTypes.shape().isRequired,
 };
 
-Brands.defaultProps = {};
+Categories.defaultProps = {};
 
-export default attach(P)(Brands);
+export default attach(P)(Categories);

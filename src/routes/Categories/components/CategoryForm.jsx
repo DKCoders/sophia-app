@@ -19,7 +19,7 @@ import photoCropUpload from '../../../services/photoCropUpload';
 import { mapValidationByType, validations, validationsMessages } from '../../../utils/helpers';
 
 const styles = () => ({
-  logo: {
+  img: {
     marginTop: 5,
     width: 80,
     height: 80,
@@ -57,15 +57,15 @@ const P = compose(
     name: '',
     description: '',
     origin: '',
-    logo: '',
+    img: '',
   }, {
     setInitial: ({
-      code, name, description, origin, logo,
+      code, name, description, origin, img,
     }) => initial => ({
-      code, name, description, origin, logo, ...initial,
+      code, name, description, origin, img, ...initial,
     }),
     onChange: () => ({ target: { name, value } }) => ({ [name]: value }),
-    setLogo: () => logo => ({ logo }),
+    setImg: () => img => ({ img }),
   }),
   withStateHandlers({
     dirty: [],
@@ -101,15 +101,15 @@ const P = compose(
     },
   }),
   withHandlers({
-    onChangeLogoClick: ({ setLogo, checkDirty }) => async () => {
+    onChangeImgClick: ({ setImg, checkDirty }) => async () => {
       const url = await photoCropUpload.show();
       if (url) {
-        setLogo(url);
-        checkDirty({ target: { name: 'logo' } });
+        setImg(url);
+        checkDirty({ target: { name: 'img' } });
       }
     },
     onSaveClick: ({
-      itemId, code, name, description, origin, logo, setLoading, onSaveComplete, setGeneralError,
+      itemId, code, name, description, img, setLoading, onSaveComplete, setGeneralError,
     }, { dispatch }) => () => {
       const resolve = (redirectId) => {
         setLoading(false);
@@ -122,10 +122,11 @@ const P = compose(
         setGeneralError(message);
       };
       setLoading(true);
-      dispatch.brand.patchBrand({
-        brandId: itemId,
+      console.log(itemId);
+      dispatch.category.patchCategory({
+        categoryId: itemId,
         patch: {
-          code, name, description, origin, logo,
+          code, name, description, img,
         },
         resolve,
         reject,
@@ -135,18 +136,17 @@ const P = compose(
   didSubscribe(({ initial, setInitial }) => { setInitial(initial); }),
 );
 
-const BrandForm = ({
+const CategoryForm = ({
   classes,
   code,
   name,
   description,
-  origin,
-  logo,
+  img,
   validationHook,
   onSaveClick,
   loading,
   onCancelClick,
-  onChangeLogoClick,
+  onChangeImgClick,
   errors,
   generalError,
   dirty,
@@ -174,13 +174,6 @@ const BrandForm = ({
         {...textFieldProps}
       />
       <TextField
-        label="Origin"
-        value={origin}
-        name="origin"
-        onChange={validationHook}
-        {...textFieldProps}
-      />
-      <TextField
         label="Description"
         value={description}
         name="description"
@@ -189,12 +182,12 @@ const BrandForm = ({
         {...textFieldProps}
       />
       <FormControl variant="outlined">
-        <InputLabel variant="outlined" shrink filled>Logo</InputLabel>
+        <InputLabel variant="outlined" shrink filled>Image</InputLabel>
         <InputBase
           inputComponent={() => (
             <div>
-              <img src={logo} alt="initial-logo" className={classes.logo} />
-              <Button variant="outlined" onClick={onChangeLogoClick}>Change logo</Button>
+              <img src={img} alt="initial-img" className={classes.img} />
+              <Button variant="outlined" onClick={onChangeImgClick}>Change image</Button>
             </div>
           )}
         />
@@ -211,27 +204,26 @@ const BrandForm = ({
   </Card>
 );
 
-BrandForm.propTypes = {
+CategoryForm.propTypes = {
   initial: PropTypes.shape().isRequired,
   code: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  origin: PropTypes.string.isRequired,
-  logo: PropTypes.string.isRequired,
+  img: PropTypes.string.isRequired,
   itemId: PropTypes.string,
   onSaveComplete: PropTypes.func,
   onCancelClick: PropTypes.func,
   onSaveClick: PropTypes.func.isRequired,
   validationHook: PropTypes.func.isRequired,
-  onChangeLogoClick: PropTypes.func.isRequired,
+  onChangeImgClick: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
 };
 
 const dummyFunc = () => {};
-BrandForm.defaultProps = {
+CategoryForm.defaultProps = {
   itemId: null,
   onSaveComplete: null,
   onCancelClick: dummyFunc,
 };
 
-export default withStyles(styles)(attach(P)(BrandForm));
+export default withStyles(styles)(attach(P)(CategoryForm));

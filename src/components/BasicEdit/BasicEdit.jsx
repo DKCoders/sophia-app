@@ -40,7 +40,7 @@ BasicEdit.propTypes = {
   mainRoute: PropTypes.string.isRequired,
   routeTitle: PropTypes.string.isRequired,
   item: PropTypes.shape(),
-  FormComponent: PropTypes.node.isRequired,
+  FormComponent: PropTypes.func.isRequired,
   onSaveComplete: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   isClone: PropTypes.bool,

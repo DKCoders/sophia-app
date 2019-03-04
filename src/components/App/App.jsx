@@ -9,6 +9,7 @@ import PrivateRoute from '../PrivateRoute';
 import Login from '../../routes/Login';
 import Dashboard from '../../routes/Dashboard';
 import Brands from '../../routes/Brands';
+import Categories from '../../routes/Categories';
 
 const styles = theme => ({
   mainContainer: {
@@ -43,6 +44,7 @@ const App = ({ location, classes }) => (
           <Grid item md={12} className={classes.wrapperHeight}>
             <PrivateRoute exact path="/" component={Dashboard} />
             <PrivateRoute path="/brands" component={Brands} />
+            <PrivateRoute path="/categories" component={Categories} />
           </Grid>
         </Grid>
       </div>

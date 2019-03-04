@@ -37,6 +37,9 @@ const Navbar = ({ logout, classes }) => (
       <Button color="inherit">
         <Link className="navbar-item" to="/brands" style={{ color: 'inherit', textDecoration: 'none' }}>Brands</Link>
       </Button>
+      <Button color="inherit">
+        <Link className="navbar-item" to="/categories" style={{ color: 'inherit', textDecoration: 'none' }}>Categories</Link>
+      </Button>
       <Button color="inherit" onClick={logout}>Logout</Button>
     </Toolbar>
   </AppBar>
