@@ -10,6 +10,7 @@ import Login from '../../routes/Login';
 import Dashboard from '../../routes/Dashboard';
 import Brands from '../../routes/Brands';
 import Categories from '../../routes/Categories';
+import Users from '../../routes/Users';
 
 const styles = theme => ({
   mainContainer: {
@@ -45,6 +46,7 @@ const App = ({ location, classes }) => (
             <PrivateRoute exact path="/" component={Dashboard} />
             <PrivateRoute path="/brands" component={Brands} />
             <PrivateRoute path="/categories" component={Categories} />
+            <PrivateRoute path="/users" component={Users} />
           </Grid>
         </Grid>
       </div>

@@ -13,7 +13,7 @@ const P = withHandlers({
   onCancelClick: ({
     history, item, isNew, mainRoute,
   }) => () => {
-    history.replace(`${mainRoute}/${isNew ? '' : item._id}`);
+    history.replace(`${mainRoute}${isNew ? '' : `/${item._id}`}`);
   },
 });
 

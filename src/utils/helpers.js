@@ -67,8 +67,7 @@ export const sortFn = (sortBy, sortOrder) => (a, b) => {
     varA = a[sortBy].toUpperCase();
     varB = b[sortBy].toUpperCase();
   }
-  let comp = 0;
-  comp = a[sortBy] > b[sortBy] ? 1 : a[sortBy] < b[sortBy] ? -1 : 0;
+  const comp = a[sortBy] > b[sortBy] ? 1 : a[sortBy] < b[sortBy] ? -1 : 0;
   return sortOrder === 'asc' ? comp : comp * -1;
 };
 
@@ -91,20 +90,21 @@ export const fieldExtractor = (field, object) => {
   return path(fields, object);
 };
 
-export const mapValidationByType = compose(
-  Object.entries,
-  reduce((acum, [property, validations]) => {
+export const mapValidationByType = (obj) => {
+  const entries1 = Object.entries(obj);
+  const reduced = reduce((acum, [property, validations]) => {
     validations.forEach((validation) => {
       if (!acum[validation]) {
         // eslint-disable-next-line no-param-reassign
         acum[validation] = [];
       }
-      acum[validation].push(property);
+      // eslint-disable-next-line no-param-reassign
+      acum[validation] = [...acum[validation], property];
     });
-    return acum;
-  }, {}),
-  Object.entries,
-);
+    return { ...acum };
+  }, {}, entries1);
+  return Object.entries(reduced);
+};
 
 export const validations = {
   required: str => !!str,

@@ -48,6 +48,26 @@ class Api {
     return response.data.data;
   }
 
+  static async getUsers() {
+    const response = await axios.get(`${apiUrl}/users?!audit._deletedAt`, Api.authHeader);
+    return response.data.data;
+  }
+
+  static async patchUser(userId, patch) {
+    const response = await axios.patch(`${apiUrl}/users/${userId}`, patch, Api.authHeader);
+    return response.data.data;
+  }
+
+  static async postUser(post) {
+    const response = await axios.post(`${apiUrl}/users`, post, Api.authHeader);
+    return response.data.data;
+  }
+
+  static async deleteUser(userId) {
+    const response = await axios.delete(`${apiUrl}/users/${userId}`, Api.authHeader);
+    return response.data.data;
+  }
+
   static async uploadImg(data) {
     const response = await axios.post(`${apiUrl}/imgs-loader/upload`, data, Api.authHeader);
     return response.data.data;

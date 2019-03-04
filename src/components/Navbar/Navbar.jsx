@@ -25,6 +25,12 @@ const P = withHandlers({
   },
 });
 
+const buttons = [
+  { to: '/brands', text: 'Brands' },
+  { to: '/categories', text: 'Categories' },
+  { to: '/users', text: 'Users' },
+];
+
 // eslint-disable-next-line no-unused-vars
 const Navbar = ({ logout, classes }) => (
   <AppBar position="static" className={classes.appBar}>
@@ -34,12 +40,11 @@ const Navbar = ({ logout, classes }) => (
           <img src={logo} alt="Sophia logo" style={{ height: 50 }} />
         </Link>
       </Typography>
-      <Button color="inherit">
-        <Link className="navbar-item" to="/brands" style={{ color: 'inherit', textDecoration: 'none' }}>Brands</Link>
-      </Button>
-      <Button color="inherit">
-        <Link className="navbar-item" to="/categories" style={{ color: 'inherit', textDecoration: 'none' }}>Categories</Link>
-      </Button>
+      {buttons.map(({ to, text }) => (
+        <Button color="inherit" key={to + text}>
+          <Link className="navbar-item" to={to} style={{ color: 'inherit', textDecoration: 'none' }}>{text}</Link>
+        </Button>
+      ))}
       <Button color="inherit" onClick={logout}>Logout</Button>
     </Toolbar>
   </AppBar>
